@@ -1,0 +1,3 @@
+Sempre que o programador faz operações de desenho no renderer, ele desenha num
+buffer secundário e a chamada SDL_RenderPresent(ren) que faz esse buffer virar
+o principal para ser mostrado na tela.
