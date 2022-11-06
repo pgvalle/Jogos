@@ -1,3 +1,14 @@
-Sempre que o programador faz operações de desenho no renderer, ele desenha num
-buffer secundário e a chamada SDL_RenderPresent(ren) que faz esse buffer virar
-o principal para ser mostrado na tela.
+Existem aqueles 2 buffers de pixels do double buffering:
+o secundário, que é onde todas as operacoes de desenho (SDL_RenderDrawRect, SDL_RenderDrawLine, ...) sao feitas;
+e o principal, que seria o que está sendo exibido na tela atualmente.
+No inicio do programa a gente sabe que os buffers guardam lixo ou são inicializados com alguma cor padrão.
+No início da primeira iteracao, o buffer secundário é limpo (SDL_RenderClear) com a cor branca
+e vira o principal (SDL_RenderPresent). Logo depois, o atual buffer secundário (com lixo/inicializado) não é limpo,
+o programa desenha um retangulo nele e faz a troca de novo.
+Essa troca da troca faz com que o buffer secundário no início da iteracao continue sendo o secundário no final dela
+e esse buffer é justamente o que recebeu a "limpeza". 
+Já o principal, que é o "sujo e com o retangulo" continua sendo o principal. E tudo repete.
+Essa troca dupla, a mudança na posição do retângulo e o "não-delay"
+dentro do while faz com que o usuário só consiga ver de fato o estado final do buffer "sujo e com o retangulo",
+que é aquela maravilha bagunçada com a cobra do retangulo desenhado varias vezes em posições diferentes
+sem o buffer ser limpo nenhuma vez.
