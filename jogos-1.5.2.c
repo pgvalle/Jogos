@@ -9,10 +9,8 @@ int AUX_WaitEventTimeoutCount(SDL_Event* evt, Uint32* ms) {
 	agora = SDL_GetTicks();
 	if (event) {
 		// algum evento aconteceu, espera menos da próxima
-		if (agora - antes > *ms)
-			*ms = 0;
-		else
-			*ms -= agora - antes;
+		if (agora - antes > *ms) *ms = 0;
+		else *ms -= agora - antes;
 	} else {
 		// reseta o temporizador
 		*ms = TIMEOUT;
