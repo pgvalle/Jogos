@@ -10,13 +10,13 @@ typedef struct FLT_Rect {
 #define PI ((float)3.14159265358979323846)
 
 void RotateRect(FLT_Rect* rect, float cx, float cy, int a) {
-    float b = a * PI / 180.f; // para radianos
+	float b = a * PI / 180.f; // para radianos
 
-    float x = rect->x + 0.5f*rect->w;
-    float y = rect->y + 0.5f*rect->h;
+	float x = rect->x + 0.5f*rect->w;
+	float y = rect->y + 0.5f*rect->h;
 
-    rect->x = (x-cx)*cos(b) - (y-cy)*sin(b) + cx - 0.5f*rect->w;
-    rect->y = (x-cx)*sin(b) + (y-cy)*cos(b) + cy - 0.5f*rect->h;
+	rect->x = (x-cx)*cos(b) - (y-cy)*sin(b) + cx - 0.5f*rect->w;
+	rect->y = (x-cx)*sin(b) + (y-cy)*cos(b) + cy - 0.5f*rect->h;
 }
 
 int AUX_WaitEventTimeoutCount(SDL_Event* evt, Uint32* ms) {
