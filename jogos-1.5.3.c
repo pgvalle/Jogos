@@ -51,7 +51,7 @@ int main()
 {
     /* INICIALIZACAO */
   SDL_Init(SDL_INIT_EVERYTHING);
-  SDL_Window* win = SDL_CreateWindow("Jogos-1.3.1",
+  SDL_Window* win = SDL_CreateWindow("Jogos-1.5.3",
     SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
     200, 200, SDL_WINDOW_SHOWN);
   SDL_Renderer* ren = SDL_CreateRenderer(win, -1, 0);

@@ -37,7 +37,7 @@ int AUX_WaitEventTimeoutCount(SDL_Event* evt, Uint32* ms) {
 }
 
 int main(int argc, char *argv[]) {
-	SDL_Window* win = SDL_CreateWindow("Jogos 1.5.2",
+	SDL_Window* win = SDL_CreateWindow("Jogos 1.5.1",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		500, 500, 0);
 	SDL_Renderer* ren = SDL_CreateRenderer(win, -1, 0);
