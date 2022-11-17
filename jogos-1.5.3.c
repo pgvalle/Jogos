@@ -55,6 +55,7 @@ int main()
     SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
     200, 200, SDL_WINDOW_SHOWN);
   SDL_Renderer* ren = SDL_CreateRenderer(win, -1, 0);
+  int running = 1;
 	Uint32 timer = TIMEOUT;
 
 	// centro
@@ -66,12 +67,15 @@ int main()
 
 
 	/* EXECUCAO */
-  while (1) {
+  while (running) {
     SDL_Event event;
 		if (AUX_WaitEventTimeoutCount(&event, &timer)) {
-			if (event.type == SDL_QUIT) break;
-			else if (event.type == SDL_KEYDOWN) {
-				switch(event.key.keysym.sym) {
+      switch (event.type) {
+      case SDL_QUIT:
+        running = 0;
+        break;
+      case SDL_KEYDOWN:
+        switch(event.key.keysym.sym) {
 				case SDLK_SPACE:
 					rot_step = rot_step != 0 ? 0 : rot_step_tmp; break;
 				case SDLK_UP:
@@ -100,7 +104,8 @@ int main()
 					else if (rect.y + rect.h / 2 > cy) rect.y--;
 					break;
 				}
-			}
+        break;
+      }
 		} else rotate_rect(&rect, cx, cy, rot_step);
         
     // Limpa a tela
