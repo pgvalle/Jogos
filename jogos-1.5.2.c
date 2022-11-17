@@ -25,10 +25,11 @@ int main() {
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		500, 500, 0);
 	SDL_Renderer* ren = SDL_CreateRenderer(win, -1, 0);
+  int running = 1;
 	Uint32 timeout = TIMEOUT;
 	SDL_Rect rect = {0, 0, 20, 20};
 
-	while (1) {
+	while (running) {
 		SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
 		SDL_RenderClear(ren);
 
@@ -40,8 +41,12 @@ int main() {
 		SDL_Event evt;
 		int event = AUX_WaitEventTimeoutCount(&evt, &timeout);
 		if (event) {
-			if (evt.type == SDL_KEYDOWN) {
-				switch (evt.key.keysym.sym) {
+      switch(evt.type) {
+      case SDL_QUIT:
+        running = 0;
+        break;
+      case SDL_KEYDOWN:
+        switch (evt.key.keysym.sym) {
 				case SDLK_UP:
 					rect.y -= 5; break;
 				case SDLK_DOWN:
@@ -51,7 +56,8 @@ int main() {
 				case SDLK_RIGHT:
 					rect.x += 5; break;
 				}
-			} else if (evt.type == SDL_QUIT) break;
+        break;
+      }
 		} else {
 			rect.x += 20;
 			rect.y += 20;
