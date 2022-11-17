@@ -45,6 +45,7 @@ int main (int argc, char* args[])
     SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
     200, 100, SDL_WINDOW_SHOWN);
   SDL_Renderer* ren = SDL_CreateRenderer(win, -1, 0);
+  int running = 1;
 
 	SDL_Rect rects[RECT_MAX];
 	SDL_Color colors[RECT_MAX];
@@ -53,22 +54,26 @@ int main (int argc, char* args[])
   /* EXECUÇÃO */
   SDL_Rect r = { 40,20, 10,10 };
   SDL_Event evt;
-  while (1) {
+  while (running) {
     SDL_SetRenderDrawColor(ren, 0xFF,0xFF,0xFF,0x00);
     SDL_RenderClear(ren);
 
     SDL_SetRenderDrawColor(ren, 0x00,0x00,0xFF,0x00);
     SDL_RenderFillRect(ren, &r);
 
-		for (int i = 0; i < rect_count && i < RECT_MAX; i++) {
-			SDL_SetRenderDrawColor(ren, colors[i].r, colors[i].g, colors[i].b, 0xff);
-			SDL_RenderFillRect(ren, &rects[i]);
-		}
+    for (int i = 0; i < rect_count && i < RECT_MAX; i++) {
+      SDL_SetRenderDrawColor(ren, colors[i].r, colors[i].g, colors[i].b, 0xff);
+      SDL_RenderFillRect(ren, &rects[i]);
+    }
 
     SDL_RenderPresent(ren);
 
     SDL_WaitEvent(&evt);
-    if (evt.type == SDL_KEYDOWN) {
+    switch(evt.type) {
+    case SDL_QUIT:
+      running = 0;
+      break;
+    case SDL_KEYDOWN:
       switch (evt.key.keysym.sym) {
       case SDLK_UP:
         r.y -= 5; break;
@@ -80,11 +85,14 @@ int main (int argc, char* args[])
         r.x += 5; break;
       }
       keep_rect_in_screen(&r);
-    } else if (evt.type == SDL_MOUSEBUTTONDOWN && rect_count < RECT_MAX) {
-			generate_colored_rect(evt.button.x, evt.button.y,
+      break;
+    case SDL_MOUSEBUTTONDOWN:
+      if (rect_count >= RECT_MAX) break;
+      generate_colored_rect(evt.button.x, evt.button.y,
       &rects[rect_count], &colors[rect_count]);
 			rect_count++;
-		} else if (evt.type == SDL_QUIT) break;
+      break;
+    }
   }
 
   /* FINALIZACAO */
