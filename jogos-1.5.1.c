@@ -41,12 +41,13 @@ int main(int argc, char *argv[]) {
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		500, 500, 0);
 	SDL_Renderer* ren = SDL_CreateRenderer(win, -1, 0);
+  int running = 1;
 	Uint32 timeout = TIMEOUT;
 	FLT_Rect r_tempo = {100, 100, 20, 20};
 	SDL_Rect r_teclado = {480, 480, 20, 20};
 	SDL_Rect r_mouse = {0, 480, 20, 20};
 
-	while (1) {
+	while (running) {
 		SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
 		SDL_RenderClear(ren);
 
@@ -67,8 +68,12 @@ int main(int argc, char *argv[]) {
 		SDL_Event evt;
 		int event = AUX_WaitEventTimeoutCount(&evt, &timeout);
 		if (event) {
-			if (evt.type == SDL_KEYDOWN) {
-				switch (evt.key.keysym.sym) {
+      switch(evt.type) {
+      case SDL_QUIT:
+        running = 0;
+        break;
+      case SDL_KEYDOWN:
+        switch (evt.key.keysym.sym) {
 				case SDLK_UP:
 					r_teclado.y -= 5; break;
 				case SDLK_DOWN:
@@ -77,11 +82,12 @@ int main(int argc, char *argv[]) {
 					r_teclado.x -= 5; break;
 				case SDLK_RIGHT:
 					r_teclado.x += 5; break;
-				}
-			} else if (evt.type == SDL_MOUSEMOTION) {
-				r_mouse.x = evt.motion.x - 10;
+				}        
+        break;
+      case SDL_MOUSEMOTION:
+        r_mouse.x = evt.motion.x - 10;
 				r_mouse.y = evt.motion.y - 10;
-			} else if (evt.type == SDL_QUIT) break;
+      }
 		} else {
 			RotateRect(&r_tempo, 250, 250, 5);
 		} 
