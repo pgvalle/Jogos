@@ -49,11 +49,11 @@ void rotate_rect(Float_Rect* rect, float cx, float cy, int a)
 
 int main()
 {
-    /* INICIALIZACAO */
+  /* INICIALIZACAO */
   SDL_Init(SDL_INIT_EVERYTHING);
   SDL_Window* win = SDL_CreateWindow("Jogos-1.5.3",
-    SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-    200, 200, SDL_WINDOW_SHOWN);
+		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+		200, 200, SDL_WINDOW_SHOWN);
   SDL_Renderer* ren = SDL_CreateRenderer(win, -1, 0);
   int running = 1;
 	Uint32 timer = TIMEOUT;
@@ -64,7 +64,6 @@ int main()
 	int rot_step = 5;
 	int rot_step_tmp = rot_step;
   Float_Rect rect = {70, 70, 20, 20}; // retangulo para rodar
-
 
 	/* EXECUCAO */
   while (running) {
