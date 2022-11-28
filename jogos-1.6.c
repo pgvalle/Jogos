@@ -37,7 +37,7 @@ int main(int argc, char** argv)
   /* INICIALIZACAO */
   srand(time(NULL));
   SDL_Init(SDL_INIT_EVERYTHING);
-  SDL_Window* win = SDL_CreateWindow("Jogos-1.5.3",
+  SDL_Window* win = SDL_CreateWindow("Jogos-1.6",
     SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
     800, 400, SDL_WINDOW_SHOWN);
   SDL_Renderer* ren = SDL_CreateRenderer(win, -1, 0);
@@ -46,11 +46,26 @@ int main(int argc, char** argv)
 
   int winner = 0;
   int race_over = 0;
-  SDL_Rect const finish = {760, 0, 20, 400};
-  SDL_Rect rects[3] = {{20,95, 20,20}, {20,195, 20,20}, {20,295, 20,20}};
-  SDL_Color colors[3] = {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}};
+  SDL_Rect const finish = {760,0, 20,400};
+  SDL_Rect r_tempo = {20,95, 20,20};
+  SDL_Rect r_teclado = {20,195, 20,20};
+  SDL_Rect r_mouse = {20,295, 20,20};
 
   while (running) {
+    int tempo_chegou = SDL_HasIntersection(&finish, &r_tempo);
+    int mouse_chegou = SDL_HasIntersection(&finish, &r_mouse);
+    int teclado_chegou = SDL_HasIntersection(&finish, &r_teclado);
+    if (!winner && tempo_chegou) {
+      winner = 1;
+    }
+    if (!winner && mouse_chegou) {
+      winner = 2;
+    }
+    if (!winner && teclado_chegou) {
+      winner = 3;
+    }
+    race_over = tempo_chegou && mouse_chegou && teclado_chegou;
+
     SDL_Event event;
     if (AUX_WaitEventTimeoutCount(&event, &timer)) {
       switch (event.type) {
@@ -59,31 +74,22 @@ int main(int argc, char** argv)
         break;
       case SDL_KEYDOWN:
         if (race_over && event.key.keysym.sym == SDLK_r) {
-          for (int i = 0; i < 3; i++)
-            rects[i].x = 20;
+          // reiniciar
+          r_tempo.x = r_teclado.x = r_mouse.x = 20;
           race_over = 0;
           winner = 0;
+        } else if (!teclado_chegou && event.key.keysym.sym == SDLK_RIGHT) {
+          r_teclado.x += 5;
+        }
+        break;
+      case SDL_MOUSEMOTION:
+        if (!mouse_chegou) {
+          r_mouse.x = event.motion.x;
         }
         break;
       }
-    } else if (!race_over) {
-      int count = 0;
-      for (int i = 0; i < 3; i++) {
-        int rect_pace = (rand() % 3 + 1) * 5;
-        rects[i].x += rect_pace;
-        if (SDL_HasIntersection(&finish, &rects[i])) {
-          if (!winner) {
-            winner = i + 1;
-            printf("O retangulo %d (de cima para baixo) venceu!\n", winner);
-          }
-          rects[i].x = finish.x - rects[i].w;
-          count++;
-        }
-      }
-
-      if (count == 3) {
-        race_over = 1;
-      }
+    } else if (!tempo_chegou) {
+      r_tempo.x += (rand() % 3 + 1) * 5;
     }
 
     SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
@@ -92,16 +98,18 @@ int main(int argc, char** argv)
     SDL_SetRenderDrawColor(ren, 200, 200, 100, 255);
     SDL_RenderFillRect(ren, &finish);
 
-    for (int i = 0; i < 3; i++) {
-      SDL_SetRenderDrawColor(ren, colors[i].r, colors[i].g, colors[i].b, 255);
-      SDL_RenderFillRect(ren, &rects[i]);
-    }
+    SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+		SDL_RenderFillRect(ren, &r_tempo);
+
+		SDL_SetRenderDrawColor(ren, 0, 255, 0, 255);
+		SDL_RenderFillRect(ren, &r_teclado);
+		
+		SDL_SetRenderDrawColor(ren, 0, 0, 255, 255);
+		SDL_RenderFillRect(ren, &r_mouse);
+
+		SDL_RenderPresent(ren);
 
     SDL_RenderPresent(ren);
-  }
-
-  if (!race_over) {
-    printf("Ninguem ganhou dessa vez. Voce terminou a aplicacao!\n");
   }
 
   /* FINALIZACAO */
