@@ -9,6 +9,8 @@ Altere o exercício 5.1 da seguinte forma:
 */
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <assert.h>
 #include <time.h>
 #include <stdio.h>
 
@@ -42,7 +44,13 @@ int main(int argc, char** argv)
     800, 400, SDL_WINDOW_SHOWN);
   SDL_Renderer* ren = SDL_CreateRenderer(win, -1, 0);
   int running = 1;
-	Uint32 timer = TIMEOUT;
+  Uint32 timer = TIMEOUT;
+
+  TTF_Init();
+  TTF_Font* fnt = TTF_OpenFont("tiny.ttf", 40);
+  assert(fnt != NULL);
+  SDL_Color clr = {0x00,0x00,0x00,0xFF};
+  SDL_Texture* txt = NULL;
 
   int winner = 0;
   int race_over = 0;
@@ -56,14 +64,22 @@ int main(int argc, char** argv)
     int mouse_chegou = SDL_HasIntersection(&finish, &r_mouse);
     int teclado_chegou = SDL_HasIntersection(&finish, &r_teclado);
     if (!winner && tempo_chegou) {
-      winner = 1;
+      clr.r = 255;
     }
     if (!winner && mouse_chegou) {
-      winner = 2;
+      clr.b = 255;
     }
     if (!winner && teclado_chegou) {
-      winner = 3;
+      clr.g = 255;
     }
+
+    if (!winner && teclado_chegou || mouse_chegou || tempo_chegou) {
+      winner = 1;
+      SDL_Surface* sfc = TTF_RenderText_Blended(fnt, "ganhou", clr);
+      txt = SDL_CreateTextureFromSurface(ren, sfc);
+      SDL_FreeSurface(sfc);
+    }
+
     race_over = tempo_chegou && mouse_chegou && teclado_chegou;
 
     SDL_Event event;
@@ -78,6 +94,7 @@ int main(int argc, char** argv)
           r_tempo.x = r_teclado.x = r_mouse.x = 20;
           race_over = 0;
           winner = 0;
+          clr.r = clr.g = clr.b = 0;
         } else if (!teclado_chegou && event.key.keysym.sym == SDLK_RIGHT) {
           r_teclado.x += 5;
         }
@@ -94,6 +111,13 @@ int main(int argc, char** argv)
 
     SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
     SDL_RenderClear(ren);
+
+    if (winner) {
+      int w, h;
+      SDL_QueryTexture(txt, NULL, NULL, &w, &h);
+      SDL_Rect r = { 20,20, w,h };
+      SDL_RenderCopy(ren, txt, NULL, &r);
+    }
 
     SDL_SetRenderDrawColor(ren, 200, 200, 100, 255);
     SDL_RenderFillRect(ren, &finish);
