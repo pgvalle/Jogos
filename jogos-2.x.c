@@ -83,10 +83,12 @@ int main()
         if (event.key.keysym.sym == SDLK_ESCAPE && moved && on_press) {
           quad.x = quad_tmp_pos.x;
           quad.y = quad_tmp_pos.y;
-          on_press = moved = false;
-
-          printf("Aborted!\n");          
         }
+
+        if (on_press)
+          printf("Aborted!\n");
+
+        on_press = moved = false;
         break;
       }
     }
